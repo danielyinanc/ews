@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.net.URI;
+
 @SpringBootApplication
 public class App {
     @Value("${exchange.email}")
@@ -38,12 +40,13 @@ public class App {
         ExchangeService service = new ExchangeService();
         ExchangeCredentials credentials = new WebCredentials(exchangeEmail, exchangePassword);
         service.setCredentials(credentials);
-        service.autodiscoverUrl(exchangeEmail);
+        service.setUrl(new URI("https://outlook.office365.com/EWS/Exchange.asmx"));
         ItemView view = new ItemView(50);
         FindItemsResults<Item> findResults;
         findResults = service.findItems(WellKnownFolderName.Inbox, view);
+        System.out.println("URL for server" + service.getUrl());
         for (Item item : findResults.getItems()) {
-            System.out.println(item.getSubject());
+            System.out.println(item.getId());
         }
 
     }
